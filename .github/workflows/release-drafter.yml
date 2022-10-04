@@ -22,6 +22,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: test
-        run: echo ${{ steps.release-drafter.outputs.tag_name }}
-    
-
+        run: |
+          npm version ${{ steps.release-drafter.outputs.tag_name }}
+          git push origin master
