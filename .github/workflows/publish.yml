@@ -20,4 +20,4 @@ jobs:
           git checkout master
           git tag -d ${{ steps.tag_name.outputs.SOURCE_TAG }}
           npm version ${{ steps.tag_name.outputs.SOUCRE_TAG }}
-          git push origin master
+          git push -u origin master
