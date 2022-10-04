@@ -14,6 +14,10 @@ jobs:
           echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
 
       - uses: fregante/setup-git-user@v1
-      - uses: rymndhng/release-on-push-action@master
-        with:
-          bump_version_scheme: ${{ steps.tag_name.outputs.SOURCE_TAG }}
+      - name: test
+        run: |
+          git fetch -a
+          git checkout master
+          git tag -d ${{ steps.tag_name.outputs.SOURCE_TAG }}
+          npm version ${{ steps.tag_name.outputs.SOUCRE_TAG }}
+          git push origin master
