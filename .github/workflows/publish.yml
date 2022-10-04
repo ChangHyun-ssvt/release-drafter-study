@@ -7,6 +7,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      
+      - name: Get Tag Name
+        id: tag_name
+        run: |
+          echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
+
       - uses: fregante/setup-git-user@v1
       - name: test
-        run: echo $env
+        run: |
+          npm version ${{ steps.tag_name.outputs.SOURCE_TAG }}
+          git push origin master
