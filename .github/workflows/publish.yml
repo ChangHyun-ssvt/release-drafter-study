@@ -3,6 +3,11 @@ on:
   push:
     branches:
       - master
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
 
 jobs:
   update_release_draft:
@@ -14,14 +19,13 @@ jobs:
         id: release-drafter
         with:
           config-name: release-drafter-config.yml
-          publish: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions/checkout@v3
-      - uses: fregante/setup-git-user@v1
-      - name: test
-        run: |
-          npm version ${{ steps.release-drafter.outputs.tag_name }}
-          git push origin master
-          git push origin develop
+      # - uses: actions/checkout@v3
+      # - uses: fregante/setup-git-user@v1
+      # - name: test
+      #   run: |
+      #     npm version ${{ steps.release-drafter.outputs.tag_name }}
+      #     git push origin master
+      #     git push origin develop
