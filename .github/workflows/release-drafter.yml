@@ -21,7 +21,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - uses: actions/checkout@v3
+      - uses: fregante/setup-git-user@v1
       - name: test
-        run: echo ${{ steps.release-drafter.outputs.tag_name }}
-    
-
+        run: |
+          npm version ${{ steps.release-drafter.outputs.tag_name }}
+          git push origin master
