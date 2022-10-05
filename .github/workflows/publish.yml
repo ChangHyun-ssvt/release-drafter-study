@@ -1,23 +1,62 @@
+name: Publish
+
+env:
+  CI: true
+
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - master
+    tags:
+      - "!*"
 
 jobs:
-  bump-version:
+  release:
+    name: Release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
       
-      - name: Get Tag Name
-        id: tag_name
-        run: |
-          echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
 
-      - uses: fregante/setup-git-user@v1
-      - name: test
-        run: |
-          git fetch -a
-          git checkout master
-          git tag -d ${{ steps.tag_name.outputs.SOURCE_TAG }}
-          npm version ${{ steps.tag_name.outputs.SOURCE_TAG }}
-          git push -u origin master
+      - name: Setup package version from package.json
+        run: node -p -e '`PACKAGE_VERSION=${require("./package.json").version}`' >> $GITHUB_ENV
+
+      - name: package version to git tag
+        uses: pkgdeps/git-tag-action@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_repo: ${{ github.repository }}
+          git_commit_sha: ${{ github.sha }}
+          git_tag_prefix: ""
+          version: ${{ env.PACKAGE_VERSION }}
+
+      - name: Get npm version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@main
+
+      - name: create release draft
+        id: create-draft
+        uses: release-drafter/release-drafter@v5.12.1
+        with:
+          version: ${{ steps.package-version.outputs.current-version }}
+          name: ${{ steps.package-version.outputs.current-version }}
+          tag: ${{ steps.package-version.outputs.current-version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+      - name: Upload Release Asset
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-draft.outputs.upload_url }} 
+          asset_path: ./sango-theme.${{ steps.package-version.outputs.current-version }}.zip
+          asset_name: sango-theme.${{ steps.package-version.outputs.current-version }}.zip
+          asset_content_type: application/zip
