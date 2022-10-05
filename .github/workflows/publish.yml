@@ -43,4 +43,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Release Code to develop branch
-        run: git push origin master:develop
+        run: git push -f origin master:develop
