@@ -41,11 +41,12 @@ jobs:
 
       - name: create release draft
         id: create-draft
-        uses: release-drafter/release-drafter@v5.12.1
+        uses: release-drafter/release-drafter@v5
         with:
           version: ${{ steps.package-version.outputs.current-version }}
           name: ${{ steps.package-version.outputs.current-version }}
           tag: ${{ steps.package-version.outputs.current-version }}
+          config-name: release-drafter-config.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
