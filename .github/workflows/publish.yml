@@ -26,15 +26,6 @@ jobs:
       - name: Setup package version from package.json
         run: node -p -e '`PACKAGE_VERSION=${require("./package.json").version}`' >> $GITHUB_ENV
 
-      - name: package version to git tag
-        uses: pkgdeps/git-tag-action@v2
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          github_repo: ${{ github.repository }}
-          git_commit_sha: ${{ github.sha }}
-          git_tag_prefix: ""
-          version: ${{ env.PACKAGE_VERSION }}
-
       - name: Get npm version
         id: package-version
         uses: martinbeentjes/npm-get-version-action@main
@@ -51,11 +42,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-
       - name: Upload Release Code
+        uses: actions/checkout@v3
+        with:
+          - ref: 'develop'
         run: |
-          git fetch -a
-          git checkout develop
-          git pull
           git rebase master
           git push -f origin develop
