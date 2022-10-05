@@ -46,6 +46,7 @@ jobs:
           version: ${{ steps.package-version.outputs.current-version }}
           name: ${{ steps.package-version.outputs.current-version }}
           tag: ${{ steps.package-version.outputs.current-version }}
+          publish: true
           config-name: release-drafter-config.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
