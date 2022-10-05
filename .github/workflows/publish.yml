@@ -42,10 +42,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload Release Code
+      - name: Checkout develop branch
         uses: actions/checkout@v3
         with:
-          - ref: 'develop'
+          ref: 'develop'
+        
+      - name: Upload Release Code
         run: |
           git rebase master
           git push -f origin develop
